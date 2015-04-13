@@ -1,0 +1,14 @@
+
+public enum EShipType {
+
+	DESTROYER(5),
+	FRIGATE(4),
+	CORVETTE(3),
+	SUBMARINE(2);
+	
+	private int value;
+	 
+	private EShipType(int value) {
+		this.value = value;
+	}
+}

@@ -1,0 +1,46 @@
+
+public class BattleField {
+
+	private int[][] field;
+	private int size;
+	private boolean isChoosen;
+	private boolean isBlocked;
+	private boolean isFree;
+	
+	public BattleField(int size, boolean isChoosen) {
+		this.size = size;
+		this.isChoosen = isChoosen;
+		this.field = new int[this.size][this.size];
+		
+	}
+
+	public int[][] getField() {
+		return this.field;
+	}
+
+	public int getSize() {
+		return this.size;
+	}
+
+	public boolean isChoosen() {
+		return this.isChoosen;
+	}
+
+	public boolean isBlocked() {
+		return this.isBlocked;
+	}
+
+	public boolean isFree() {
+		return this.isFree;
+	} 
+	
+	public void printField(){
+		
+	}
+	
+	
+	public void setShips(EShipType ship, int[][] position){
+		
+	}
+	
+}

@@ -1,0 +1,117 @@
+
+/**
+ * Write a description of class MatrixTools here.
+ * 
+ * @author ML 
+ * @version 09.12.14
+ */
+public class MatrixTools
+{
+    public int findMax(int[][] matrix){
+        int max = 0;
+
+        for(int[] i : matrix){
+            for(int j : i){
+                if(j > max){
+                    max = j;
+                }
+            }
+        }
+        return max;
+    }
+
+    public boolean find(int[][] matrix, int value){
+
+        for(int[] i : matrix){
+            for(int j : i){
+                if(j == value){
+                    return true;
+                }
+
+            }
+        }
+        return false;
+    }
+
+    public int[] convertToArray(int[][] matrix){
+        int[] arr = new int[matrix.length*matrix[0].length];
+       
+        for(int i = 0; i < matrix.length; i++){
+
+            for(int j = 0; j < matrix[0].length; j++){
+                arr[j+(i*matrix[0].length)] = matrix[i][j];
+            }
+        }
+        return arr;
+    }
+
+    public void swap(int[][] matrix1, int[][] matrix2){
+        int copy = 0;
+
+        for(int i = 0; i < matrix1.length; i++){
+            for(int j = 0; j < matrix1[0].length; j++){
+                copy = matrix1[i][j];
+                matrix1[i][j] = matrix2[i][j];
+                matrix2[i][j] = copy;
+            }
+        }
+
+    }
+
+    public void print(char[][] matrix){
+        for(int i = 0; i < matrix[0].length; i++){
+            for(int j = 0; j < matrix.length; j++){
+                IO.print(matrix[j][i]);
+                IO.print("\t");
+            }
+            IO.println("");
+        }
+    }
+    
+    public void initMatrix(String[][] matrix){	
+    	
+    	for(int i = 0; i < matrix[0].length; i++){
+            for(int j = 0; j < matrix.length; j++){
+               //Füllt Matrix mit Tilde Symbol 
+            	matrix[j][i] = " \u223C ";
+            }
+        }
+    }
+
+    public void addMatrix(int ival, int jval, char orientation, int length, String[][]matrix, EShipType ship ){	
+    	String shipSymbol = "X";
+    	
+    	switch(ship){
+    	case destroyer:
+    		shipNumber = "D";
+    		break;
+    	
+    	case frigate:
+    		shipNumber = "F";
+    		break;
+    	
+    	case corvette:
+    		shipNumber = "C";
+    		break;
+    	
+    	case submarine:
+    		shipNumber = "S";
+    		break;
+    	}
+    	
+    	if(orientation == 'h'){
+    		  for(int j = jval; j < length; j++){
+                   //Füllt Matrix mit ShiffZahl Symbol 
+                	matrix[ival][j] = " "+ shipSymbol+" ";
+                }
+            }
+    	else{
+    		
+    		for(int i = ival; i < length; i++){
+                //Füllt Matrix mit ShiffZahl Symbol 
+             	matrix[i][jval] = " "+ shipSymbol+" ";
+             }
+    	}
+    	
+    }
+}

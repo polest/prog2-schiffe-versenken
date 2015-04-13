@@ -1,0 +1,40 @@
+/**
+ * @author ML
+ * 13.04.2015 version 1.0.0
+ */
+public class Player {
+
+	private boolean isActive;
+	private boolean isAlive;
+	private int totalShips;
+	private int destroyer;
+	private int frigate;
+	private int corvette;
+	private int submarine;
+	private String playerName;
+	
+	
+	/**
+	 * Konstruktor eins Spielers
+	 * @param isActive - Gibt an ob der Spieler an der Reihe ist
+	 * @param totalShips - Anzahl aller Schiffe
+	 * @param destroyer - Anzahl aller Zerstörer
+	 * @param frigate - Anzahl aller Fregatten
+	 * @param corvette - Anzahl aller Korvetten
+	 * @param submarine - Anzahl aller UBoote
+	 * @param playerName - Spieler Name
+	 */
+	public Player(boolean isActive, int totalShips, int destroyer, int frigate,
+			int corvette, int submarine, String playerName) {
+		super();
+		this.isActive = isActive;
+		this.totalShips = totalShips;
+		this.destroyer = destroyer;
+		this.frigate = frigate;
+		this.corvette = corvette;
+		this.submarine = submarine;
+		this.playerName = playerName;
+	}
+	
+	
+}

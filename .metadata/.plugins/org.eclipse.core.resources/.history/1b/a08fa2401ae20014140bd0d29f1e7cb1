@@ -1,0 +1,88 @@
+
+public class GameOptions {
+
+	 private int[] player;
+	    private int fieldSize;
+	    private int destroyer;
+	    private int frigate;
+	    private int corvette;
+	    private int submarine;
+	    
+	    
+	    public void initGame(){
+	        IO.println("Willkommen bei BATTLESHIP special LARS edition!\n"
+	                   + "um das Spiel zu beginnen, müssen Sie zunächst einmal\n"
+	                   + "das Spiel konfigurieren.");
+	                  
+	       initPlayer();
+	       initField();
+	       initShips();
+	    }
+	    
+	    public int getPlayer() {
+			return this.player;
+		}
+
+		public int getFieldSize() {
+			return this.fieldSize;
+		}
+
+		public int getDestroyer() {
+			return this.destroyer;
+		}
+
+		public int getCorvette() {
+			return this.corvette;
+		}
+		
+		public int getFrigate() {
+			return this.frigate;
+		}
+
+		public int getSubmarine() {
+			return this.submarine;
+		}
+
+		private void initPlayer(){
+
+	       IO.println("Bitte wählen sie Spieleranzahl zwischen 2 und 6 Spielern aus: ");
+	       int anzahl = IO.readInt();
+	       
+	       while(anzahl < 2 || anzahl > 6){
+	            IO.println("Ungültige Eingabe. Bitte zwischen 2-6 auswählen!");
+	            anzahl = IO.readInt();
+	        }
+	      
+	        this.player = new int[anzahl];
+	    }
+
+	    private void initField(){
+	        IO.println("Bitte geben sie die Seitengröße des quadratischen Feldes ein: (mind. 5!)");
+	        
+	        int anzahl = IO.readInt();
+	       
+	       while(anzahl < 5){
+	            IO.println("Ungültige Eingabe. Bitte eine Zahl größer als 5 eingeben!");
+	            anzahl = IO.readInt();
+	        }
+	        
+	        this.fieldSize = anzahl;
+	    }
+	    
+	    private void initShips(){
+	        
+	        IO.println("Bitte geben sie nun die Anzahl der Schiffe an:\n"
+	                   +"Zerströrer:");
+	        this.destroyer = IO.readInt();
+	        
+	        IO.println("Fregatten:");
+	        this.frigate = IO.readInt();
+	        
+	        IO.println("Korvetten:");
+	        this.corvette = IO.readInt();
+	        
+	        IO.println("UBoote:");
+	        this.submarine = IO.readInt();
+	    }
+	    
+	}
