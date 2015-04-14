@@ -10,6 +10,11 @@ public class GameOptions {
 	private int submarine;
 	private int ships;
 
+
+	/**
+	 * Kontruktor der Optionen
+	 * Setzt Standard Werte der Einstellungen
+	 */
 	public GameOptions(){
 		this.player = 2;
 		this.fieldSize = 10;
@@ -25,6 +30,9 @@ public class GameOptions {
 
 	}
 
+	/**
+	 * Spielstart ruft die Optionen für Spieler, Spielfeld und Schiffe auf
+	 */
 	public void initGame(){
 		IO.println("Willkommen bei BATTLESHIP special LARS edition!\n"
 				+ "um das Spiel zu beginnen, müssen Sie zunächst einmal\n"
@@ -35,39 +43,68 @@ public class GameOptions {
 		initShips();
 	}
 
+
+	/**
+	 * @return gibt die Anzahl der Spieler zurück
+	 */
 	public int getPlayer() {
 		return player;
 	}
 
+	/**
+	 * @return gibt die festgelegte Feldgröße zurück
+	 */
 	public int getFieldSize() {
 		return fieldSize;
 	}
 
+	/**
+	 * @return gibt die festgelegte Anzahl an Zerstörern zurück
+	 */
 	public int getDestroyer() {
 		return destroyer;
 	}
 
+	/**
+	 * @return gibt die festgelegte Anzahl an Fregatten zurück
+	 */
 	public int getFrigate() {
 		return this.frigate;
 	}
 
 
+	/**
+	 * @return gibt die festgelegte Anzahl an Korvetten zurück
+	 */
 	public int getCorvette() {
 		return corvette;
 	}
 
+	/**
+	 * @return gibt die festgelegte Anzahl an UBooten zurück
+	 */
 	public int getSubmarine() {
 		return submarine;
 	}
 
+
+	/**
+	 * @return gibt die Liste der Spielernamen zurück
+	 */
 	public String[] getPlayerNames(){
 		return this.playerNames;
 	}
 
+	/**
+	 * @return gibt die gesamt Anzahl an Schiffen zurück
+	 */
 	public int getShips(){
 		return ships;
 	}
 
+	/**
+	 * Einstellungen der Spieleranzahl und ihre Namen
+	 */
 	private void initPlayer(){
 
 		IO.println("Bitte wählen sie die Anzahl der Spieler aus [2-6]: ");
@@ -88,12 +125,15 @@ public class GameOptions {
 		}
 	}
 
+	/**
+	 * Einstellung der Größe des Spielfeldes
+	 */
 	private void initField(){
-		IO.println("Bitte geben sie die Seitengröße des quadratischen Feldes ein: (mind. 5!)");
+		IO.println("Bitte geben sie die Seitengröße des quadratischen Feldes ein: (mind. 6!)");
 
 		int anzahl = IO.readInt();
 
-		while(anzahl < 5){
+		while(anzahl < 6){
 			IO.println("Ungültige Eingabe. Bitte eine Zahl größer als 5 eingeben!");
 			anzahl = IO.readInt();
 		}
@@ -101,6 +141,9 @@ public class GameOptions {
 		this.fieldSize = anzahl;
 	}
 
+	/**
+	 * Einstellung der Anzahl jeweiliger Schiffe
+	 */
 	private void initShips(){
 
 		IO.println("Bitte geben sie nun die Anzahl der Schiffe an:\n"
