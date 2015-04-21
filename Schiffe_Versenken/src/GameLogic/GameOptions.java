@@ -1,3 +1,6 @@
+package GameLogic;
+import GameTools.IO;
+
 
 public class GameOptions {
 
@@ -9,6 +12,16 @@ public class GameOptions {
 	private int corvette;
 	private int submarine;
 	private int ships;
+	private final int totalSizeOfShipSpaceDefault = 50;
+
+	private int spaceLeftInField;
+	private String errorString;
+
+	private final int destroyerSize;
+	private final int frigateSize;
+	private final int corvetteSize;
+	private final int submarineSize;
+	private final int defaultWaterSpaces = 10;
 
 
 	/**
@@ -19,15 +32,22 @@ public class GameOptions {
 		this.player = 2;
 		this.fieldSize = 10;
 		this.destroyer = 1;
-		this.frigate = 2;
-		this.corvette = 2;
+		this.frigate = 1;
+		this.corvette = 1;
 		this.submarine = 1;
-		this.ships = 6;
+		this.ships = 4;
 
 		this.playerNames = new String[2];
 		this.playerNames[0] = "Spieler 1";     
 		this.playerNames[1] = "Spieler 2";
 
+		this.errorString = "Diese Anzahl von Schiffen bei einer Feldgröße von "
+				+ this.fieldSize + " ist nicht möglich. Bitte erneut eingeben!";
+
+		this.destroyerSize = 21;
+		this.frigateSize = 18;
+		this.corvetteSize = 15;
+		this.submarineSize = 12;
 	}
 
 	/**
@@ -40,6 +60,7 @@ public class GameOptions {
 
 		initPlayer();
 		initField();
+		this.spaceLeftInField = ( ( this.fieldSize * this.fieldSize) - totalSizeOfShipSpaceDefault )  + (this.fieldSize * 4);
 		initShips();
 	}
 
@@ -108,20 +129,37 @@ public class GameOptions {
 	private void initPlayer(){
 
 		IO.println("Bitte wählen sie die Anzahl der Spieler aus [2-6]: ");
-		int anzahl = IO.readInt();
+		int count = IO.readInt();
 
-		while(anzahl < 2 || anzahl > 6){
+		while(count < 2 || count > 6){
 			IO.println("Ungültige Eingabe. Bitte zwischen 2-6 auswählen!");
-			anzahl = IO.readInt();
+			count = IO.readInt();
 		}
 
-		this.player = anzahl;
-		this.playerNames = new String[anzahl];
-		for(int i = 0; i < anzahl; i++){
+		this.player = count;
+		this.playerNames = new String[count];
+		for(int i = 0; i < count; i++){
 			int c = i+1;
-			IO.println("Spieler " + c + " Name: ");
-			this.playerNames[i] = IO.readString();
+			boolean nameUnique = true;
 
+			IO.println("Spieler " + c + " Name: ");
+			String tempName;
+			do{
+				 tempName= IO.readString();
+				 nameUnique = true;
+
+				for(int t = 0; t < this.playerNames.length; t++){
+
+					if(this.playerNames[t] != null){
+						if(this.playerNames[t].equals(tempName)){
+							System.out.println("Name schon vorhanden! Bitte erneut eingeben: ");
+							nameUnique = false;	
+						}
+					}
+				}
+
+			}while(nameUnique == false);
+			this.playerNames[i] = tempName;	
 		}
 	}
 
@@ -129,39 +167,209 @@ public class GameOptions {
 	 * Einstellung der Größe des Spielfeldes
 	 */
 	private void initField(){
-		IO.println("Bitte geben sie die Seitengröße des quadratischen Feldes ein: (mind. 6!)");
+		IO.println("Bitte geben sie die Seitengröße des quadratischen Feldes ein: (mind. 9!)");
 
-		int anzahl = IO.readInt();
+		int count = IO.readInt();
 
-		while(anzahl < 6){
-			IO.println("Ungültige Eingabe. Bitte eine Zahl größer als 5 eingeben!");
-			anzahl = IO.readInt();
+		while(count < 9 || count > 50){
+			if(count != 50){
+				IO.println("Ungültige Eingabe. Bitte eine Zahl größer als 8 eingeben!");
+			}
+			else{
+				IO.println("Ein Spielfeld von einer Größe ab 50 ist zu riesig! Erneut eingeben:");
+
+			}
+			count = IO.readInt();
 		}
 
-		this.fieldSize = anzahl;
+		this.fieldSize = count;
 	}
 
 	/**
 	 * Einstellung der Anzahl jeweiliger Schiffe
 	 */
 	private void initShips(){
+		IO.println("Wählen sie die Anzahl der jeweiligen Schiffe." 
+				+ "\nBei nicht eingegebener Anzahl wird der standart Wert von 1 je Schiff eingetragen.");
+
+		this.initDestroyer();
+		this.initFrigate();
+		this.initCorvette();
+		this.initSubmarine();
+
+		this.ships = this.destroyer + this.frigate + this.corvette + this.submarine;
+		this.checkShipsCount(ships);
+	}
+
+	private void initDestroyer(){
+		int temp = 0;
+		boolean checked = false;
 
 		IO.println("Bitte geben sie nun die Anzahl der Schiffe an:\n"
 				+"Zerströrer:");
-		this.destroyer = IO.readInt();
 
-		IO.println("Fregatten:");
-		this.frigate = IO.readInt();
+		while(checked == false){
+			temp = IO.readInt();
+			if(temp > 1){
+				temp = temp - 1;
 
-		IO.println("Korvetten:");
-		this.corvette = IO.readInt();
+				int neededSpace = temp  * this.destroyerSize;
+				if(spaceLeftInField > neededSpace){
+					if((spaceLeftInField % neededSpace ) > this.defaultWaterSpaces){
+						this.destroyer = 1 + temp;
+						checked = true;
+						spaceLeftInField = spaceLeftInField - (temp * this.destroyerSize);
+					}
+					else{
+						IO.println(errorString);
+					}
+				}
+				else{
+					IO.println(errorString);
+				}
 
-		IO.println("UBoote:");
-		this.submarine = IO.readInt();
+			}
+			else{
+				checked = true;
+				this.destroyer = temp;
+				if(this.destroyer == 0){
+					spaceLeftInField = spaceLeftInField - this.destroyerSize;
+				}
+			}
+		}
 
-		this.ships = this.destroyer + this.frigate + this.corvette + this.submarine;
 	}
 
+	private void initFrigate(){
+		int temp = 0;
+		boolean checked = false;
 
+		IO.println("Fregatten:");
+
+		while(checked == false){
+			temp = IO.readInt();
+			if(temp > 1){
+
+				temp = temp - 1;
+
+				int neededSpace = temp * this.frigateSize;
+				if(spaceLeftInField > neededSpace){
+					if((spaceLeftInField % ( temp * this.frigateSize) ) > this.defaultWaterSpaces){
+						this.frigate = 1 + temp;
+						checked = true;
+						spaceLeftInField = spaceLeftInField - (temp * this.frigateSize);
+					}
+					else{
+						IO.println(errorString);
+					}
+				}
+				else{
+					IO.println(errorString);
+				}
+			}
+			else{
+				checked = true;
+				this.frigate = temp;
+				if(this.frigate == 0){
+					spaceLeftInField = spaceLeftInField - this.frigateSize;
+				}
+			}
+
+		}
+	}
+
+	private void initCorvette(){
+		int temp = 0;
+		boolean checked = false;
+
+		IO.println("Korvetten:");
+
+		while(checked == false){
+			temp = IO.readInt();
+
+			if(temp > 1){
+				temp = temp - 1;
+				int neededSpace = (temp * this.corvetteSize);
+				if(spaceLeftInField > neededSpace){
+					if((spaceLeftInField % (temp  * this.corvetteSize) ) > defaultWaterSpaces){
+						this.corvette = 1 + temp;
+						checked = true;
+						spaceLeftInField = spaceLeftInField - (temp * this.corvetteSize);
+					}
+					else{
+						IO.println(errorString);
+					}
+				}
+				else{
+					IO.println(errorString);
+				}
+			}
+			else{
+				checked = true;
+				this.corvette = temp;
+				if(this.corvette == 0){
+					spaceLeftInField = spaceLeftInField - this.corvetteSize;
+				}
+			}
+
+		}
+
+	}
+
+	private void initSubmarine(){
+
+		int temp = 0;
+		boolean checked = false;
+
+		IO.println("UBoote:");
+
+		while(checked == false){
+			temp = IO.readInt();
+			if(temp > 1){	
+				temp = temp - 1;
+
+				int neededSpace = (temp * this.submarineSize);
+				if(spaceLeftInField > neededSpace){
+					if((spaceLeftInField % (temp  * this.submarineSize) ) > defaultWaterSpaces){
+						this.submarine = 1 + temp;
+						checked = true;
+						spaceLeftInField = spaceLeftInField - (temp * this.submarineSize);
+					}
+					else{
+						IO.println(errorString);
+					}
+				}
+				else{
+					IO.println(errorString);
+				}
+			}
+			else{
+				checked = true;
+				this.submarine = temp;
+				if(this.submarine == 0){
+					spaceLeftInField = spaceLeftInField - this.submarineSize;
+				}
+
+			}
+		}
+	}
+
+	private void checkShipsCount(int ships){
+		if(this.ships <= 0){
+			IO.println("Es wurden keine Schiffe für das Spiel festgelegt. \nSpiel kann nich fortgesetzt werden."
+					+ "\nUm das Spiel erneut zu Starten drücken sie N und zum Beenden irgendeine andere Taste");
+			char result = IO.readChar();
+
+			java.lang.Character.toLowerCase(result);
+
+			if(result == 'n'){
+				this.initShips();
+			}
+			else{
+				System.exit(0);
+			}
+		}
+	}
 
 }
+

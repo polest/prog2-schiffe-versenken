@@ -1,0 +1,516 @@
+package GameTools;
+
+import GamePlayer.Player;
+
+
+/**
+ * Write a description of class MatrixTools here.
+ * 
+ * @author ML 
+ * @version 09.12.14
+ */
+public class MatrixTools
+{
+	private final char black ='\u25A0';
+	private final char wave ='\u223C';
+
+	/**
+	 * @param matrix 
+	 * Druckt die Matrix als Spielfeld 
+	 * mit Grafischen Extras auf der Konsole aus
+	 * Die Matrix mit verschönerungen wird nur ausgedruckt und 
+	 * nicht gespeichert oder zurückgegeben!
+	 */
+	public void printPrivateField(int[][] matrix){
+
+		int[][] printMatrix = new int[matrix.length+1][matrix.length+1];
+
+
+		for(int y = 0; y < printMatrix.length; y++){
+			String leftAlignFormat = "| %-3s ";
+			boolean isSmallField = true;
+
+			if(matrix.length > 9){
+				isSmallField  = true;
+			}
+			else{
+				isSmallField = false;
+			}
+
+			for(int f = 0; f < printMatrix.length; f++){
+
+				System.out.format("+-----");
+			}
+
+			System.out.print("+ \n");
+
+			for(int x = 0; x < printMatrix.length; x++){
+
+
+				if( (x == 0) && (y == 0)){
+					System.out.format(leftAlignFormat, "y\\x");
+				}
+				else if(y == 0){
+					if(isSmallField == true && x < 10){
+
+						System.out.format(leftAlignFormat, " " + x);
+					}
+					else{
+						System.out.format(leftAlignFormat, x);
+
+					}
+
+				}
+				else if(x == 0){
+					if(isSmallField == true && x < 10){
+
+						System.out.format(leftAlignFormat, " " + y);
+					}
+					else{
+						System.out.format(leftAlignFormat, y);
+					}
+				}
+				else{
+
+					if(matrix[y-1][x-1] == 0){
+						System.out.format(leftAlignFormat," " + wave);
+
+					}
+					else{
+						System.out.format(leftAlignFormat, " " + black);
+
+					}
+				}
+
+			}
+			System.out.println("");
+		}
+
+		for(int f = 0; f < printMatrix.length; f++){
+
+			System.out.format("+-----");
+		}
+
+		System.out.print("+ \n");
+
+	}
+
+
+	/**
+	 * @param matrix - Spielfeld Matrix
+	 * @return gibt die grafische Ausgangs Matrix (Spielfeld) zurück
+	 * Das Spielfeld wird standardmäßig mit Tilden für nicht belegte Felder gefüllt
+	 * 
+	 */
+	public int[][] initMatrix(int[][] matrix){	
+
+		for(int i = 0; i < matrix.length; i++){
+			for(int j = 0; j < matrix.length; j++){
+				//Füllt Matrix mit Tilde Symbol 
+				matrix[i][j] = 0;
+			}
+		}
+		return matrix;
+	}
+
+	/**
+	 * @param ival - Benutzereingabe X-Koordinate
+	 * @param jval - Benutzereingabe Y-Koordinate
+	 * @param orientation - Benutzereingabe Richtung der Schiffspositionierung
+	 * @param matrix - Spielfeld des jeweiligen Spielers
+	 * @param ship - ausgewählte Schiff
+	 * @return Gibt das mit dem ausgewähltem Schiff positionierte Spielfeld zurück 
+	 */
+	public int[][] addMatrix(int xVal, int yVal, char orientation, int[][]matrix, EShipType ship ){	
+		//Koordinaten beginnen ab 1, Array aber ab 0 daher um 1 inkrementieren für equivalenten Wert
+		xVal--;
+		yVal--;
+
+		int shipSymbol = 0;
+		int length = 0;
+
+		/*Je nach ausgewähltem Schiffstyp 
+		 *ein Kennzeichnungssymbol sowie die Schiffslänge setze
+		 */
+		switch(ship){
+		case DESTROYER:
+			shipSymbol = 1;
+			length = 5;
+			break;
+
+		case FRIGATE:
+			shipSymbol = 2;
+			length = 4;
+			break;
+
+		case CORVETTE:
+			shipSymbol = 3;
+			length = 3;
+			break;
+
+		case SUBMARINE:
+			shipSymbol = 4;
+			length = 2;
+			break;
+		}
+
+		//Bei vertikaler Ausrichtung des Schiffes
+		if(orientation == 'h'){
+			for(int x = xVal; x < xVal + length; x++){
+				//Füllt Matrix mit dem Symbol des jeweiligen Schiffes
+				matrix[yVal][x] = shipSymbol;
+			}
+		}
+		//Bei horizontaler Ausrichtung des Schiffes
+		else{
+
+			for(int y = yVal; y < yVal+length; y++){
+				//Füllt Matrix mit dem Symbol des jeweiligen Schiffes
+				matrix[y][xVal] = shipSymbol;
+			}
+		}
+		return matrix;
+	}
+
+
+	/**
+	 * @param ival - Benutzereingabe X-Koordinate
+	 * @param jval - Benutzereingabe Y-Koordinate
+	 * @param orientation - Benutzereingabe Richtung der Schiffspositionierung
+	 * @param matrix - Spielfeld des jeweiligen Spielers
+	 * @param ship - ausgewählte Schiff
+	 * @return Ein boolschen Wert, ob das Schiff an der ausgewählten Position und Ausrichtung
+	 * basierend auf den Spielregeln positioniert werden kann oder nicht
+	 */
+	public boolean checkPrivateFields(int xVal, int yVal, char orientation, int[][]matrix, EShipType ship){
+		//Koordinaten beginnen ab 1, Array aber ab 0 daher um 1 inkrementieren für equivalenten Wert
+		xVal--;
+		yVal--;
+
+		int length = 0;
+
+		//Schifflänge anhand des Ausgewählten Schiffes
+		switch(ship){
+		case DESTROYER:
+			length = 5;
+			break;
+
+		case FRIGATE:
+			length = 4;
+			break;
+
+		case CORVETTE:
+			length = 3;
+			break;
+
+		case SUBMARINE:
+			length = 2;
+			break;
+		}
+
+		int yIndex = yVal;
+		int xIndex = xVal;
+		int yMarginTop = 1;
+		int xMarginLeft = 1;
+		int yMarginBottom = 1;
+		int xMarginRight = 1;
+
+		//Bei vertikaler Ausrichtung
+		if(orientation == 'v'){
+
+			/*
+			 * Da die Umgebenen Positionen des Schiffes geprüft werden,
+			 * muss der Abstand nach links, rechts, oben oder unten
+			 * auf 0 gesetzt werden, sofern es in einer der Ecken beginnt oder
+			 * die Länge einer dieser Ecken erreicht
+			 * 
+			 * Ansonsten wird der Abstand als 1 Feld links/oben, das eigene Feld sowie 1 Feld rechts/unten
+			 * mitüberprüft
+			 * -> sonst ArrayOutOfBounds
+			 */
+
+			//obere Ecke
+			if(yIndex == 0){
+				yMarginTop = 0;
+			}
+			//linke Ecke
+			if(xIndex == 0){
+				xMarginLeft = 0;
+			}
+			//untere Ecke
+			if( (yIndex + length) == matrix.length){
+				yMarginBottom = 0;
+			}
+			//rechte Ecke
+			if(xIndex == (matrix.length - 1) ){
+				xMarginRight = 0;
+			}
+
+			//Koordinaten Länge des Schiffes ab der gewählten Position
+			int shipLength = yIndex + length;
+
+			/*Wenn die Schiffslänge ab den gewählten Startkoordinaten 
+			 * länger ist als die Feldlänge, ist eine positionierung nicht möglich
+			 */
+			if(shipLength > matrix.length){
+				return false;
+			}
+
+			/*
+			 * Ansonsten, prüfe nun ob das Schiff in Vertikaler ausrichtung 
+			 * an ein anderes Schiff anrenzt
+			 */
+			for(int y = (yIndex - yMarginTop); y < (shipLength + yMarginBottom); y++ ){
+				for( int x = (xIndex - xMarginLeft); x <= (xIndex + xMarginRight); x++){
+					//TESTAUSGABE IO.println("j: " + j + " i: " + i);
+					if(matrix[y][x] > 0){
+						return false;
+					}
+				}
+			}
+		}
+		else{
+
+			//obere Ecke
+			if(yIndex == 0){
+				yMarginTop = 0;
+			}
+			//linke Ecke
+			if(xIndex == 0){
+				xMarginLeft = 0;
+			}
+			//untere Ecke
+			if( yIndex == (matrix.length - 1) ){
+				yMarginBottom = 0;
+			}
+			//rechte Ecke
+			if( (xIndex + length ) == matrix.length ){
+				xMarginRight = 0;
+			}
+			int shipLength = xIndex + length;
+
+			/*Wenn die Schiffslänge ab der gewählten Startkoordinaten 
+			 * länger ist als die Feldlänge, ist eine positionierung nicht möglich
+			 */
+			if( (shipLength) > matrix.length){
+				return false;
+			}
+
+			/*
+			 * Ansonsten, prüfe nun ob das Schiff in Vertikaler ausrichtung 
+			 * an ein anderes Schiff anrenzt
+			 */
+			for(int y = (yIndex - yMarginTop); y <= (yIndex + yMarginBottom); y++ ){
+				for( int x = (xIndex - xMarginLeft); x < (shipLength + xMarginRight); x++){
+					//TESTAUSGABE IO.println("y: " + y + " x: " + x);
+					if(matrix[y][x] > 0){
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+
+	}
+
+	public void attackField(EShipType ship, int[] coordinates, char orientation, Player player){
+		int[][] publicField = player.getPublicField().getField();
+		int[][] privateField = player.getPrivateField().getField();
+
+
+		int shootLength = 0;
+
+		switch(ship){
+		case CORVETTE:
+			shootLength = 1;
+			break;
+		case DESTROYER:
+			shootLength = 3;
+			break;
+		case FRIGATE:
+			shootLength = 2;
+			break;
+		case SUBMARINE:
+			shootLength = 1;
+			break;
+		default:
+			break;
+
+		}
+
+		int xStart = coordinates[0]-1;
+		int yStart = coordinates[1]-1;
+
+		if(orientation == 'h'){
+
+			for(int x = 0; x < shootLength; x++){
+				int translateX = xStart + x;
+				
+				if(translateX < privateField.length){
+
+					
+					if(privateField[yStart][translateX] == 0){
+
+						publicField[yStart][translateX] = 1;
+					}
+					else if(privateField[yStart][translateX] == 1){
+						publicField[yStart][translateX] = 2;
+
+						for(int i = 0; i < player.getDestroyer().length; i++){
+							player.getDestroyer()[i].isHit(translateX, yStart);
+						}
+
+					}
+					else if(privateField[yStart][translateX] == 2){
+						publicField[yStart][translateX] = 2;
+
+						for(int i = 0; i < player.getFrigate().length; i++){
+							player.getFrigate()[i].isHit(translateX, yStart);
+						}
+					}
+					else if(privateField[yStart][translateX] == 3){
+						publicField[yStart][translateX] = 2;
+
+						for(int i = 0; i < player.getCorvette().length; i++){
+							player.getCorvette()[i].isHit(translateX, yStart);
+						}
+					}
+					else if(privateField[yStart][translateX] == 4){
+						publicField[yStart][translateX] = 2;
+
+						for(int i = 0; i < player.getSubmarine().length; i++){
+							player.getSubmarine()[i].isHit(translateX, yStart);
+						}
+					}
+				}
+			}
+		}
+		else{
+			
+			for(int y = yStart; y < shootLength; y++){
+				int translateY = yStart + y;
+				
+				if(translateY < privateField.length){
+
+					if(privateField[translateY][xStart] == 0){
+						publicField[translateY][xStart] = 1;
+					}
+					else if(privateField[translateY][xStart] == 1){
+						publicField[translateY][xStart] = 2;
+
+						for(int i = 0; i < player.getDestroyer().length; i++){
+							player.getDestroyer()[i].isHit(translateY, xStart);
+						}
+					}
+					else if(privateField[translateY][xStart] == 2){
+						publicField[translateY][xStart] = 2;
+
+						for(int i = 0; i < player.getFrigate().length; i++){
+							player.getFrigate()[i].isHit(translateY, xStart);
+						}
+					}
+					else if(privateField[translateY][xStart] == 3){
+						publicField[translateY][xStart] = 2;
+
+						for(int i = 0; i < player.getCorvette().length; i++){
+							player.getCorvette()[i].isHit(translateY, xStart);
+						}
+					}
+					else if(privateField[translateY][xStart] == 4){
+						publicField[translateY][xStart] = 2;
+
+						for(int i = 0; i < player.getSubmarine().length; i++){
+							player.getSubmarine()[i].isHit(translateY, xStart);
+						}
+					}
+
+				}
+			}
+		}
+
+		printPublicField(publicField);
+	}
+
+	public void printPublicField(int[][] publicField){
+
+
+		int[][] printMatrix = new int[publicField.length+1][publicField.length+1];
+
+
+		for(int y = 0; y < printMatrix.length; y++){
+			String leftAlignFormat = "| %-3s ";
+			boolean isSmallField = true;
+
+			if(publicField.length > 9){
+				isSmallField  = true;
+			}
+			else{
+				isSmallField = false;
+			}
+
+			for(int f = 0; f < printMatrix.length; f++){
+
+				System.out.format("+-----");
+			}
+
+			System.out.print("+ \n");
+
+			for(int x = 0; x < printMatrix.length; x++){
+
+
+				if( (x == 0) && (y == 0)){
+					System.out.format(leftAlignFormat, "y\\x");
+				}
+				else if(y == 0){
+					if(isSmallField == true && x < 10){
+
+						System.out.format(leftAlignFormat, " " + x);
+					}
+					else{
+						System.out.format(leftAlignFormat, x);
+
+					}
+
+				}
+				else if(x == 0){
+					if(isSmallField == true && x < 10){
+
+						System.out.format(leftAlignFormat, " " + y);
+					}
+					else{
+						System.out.format(leftAlignFormat, y);
+					}
+				}
+				else{
+
+					if(publicField[y-1][x-1] == 0){
+						System.out.format(leftAlignFormat," " + wave);
+
+					}
+					else if(publicField[y-1][x-1] == 1){
+						System.out.format(leftAlignFormat, " X" );
+
+					}
+					else{
+						System.out.format(leftAlignFormat, " " + black);
+					}
+
+				}
+
+			}
+			System.out.println("");
+		}
+
+		for(int f = 0; f < printMatrix.length; f++){
+
+			System.out.format("+-----");
+		}
+
+		System.out.print("+ \n");
+
+	}
+
+
+
+
+}

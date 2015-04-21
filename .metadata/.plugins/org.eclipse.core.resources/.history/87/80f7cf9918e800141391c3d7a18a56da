@@ -1,0 +1,113 @@
+package GameFields;
+import GamePlayer.Player;
+import GameTools.EShipType;
+import GameTools.MatrixTools;
+
+public class BattleField {
+
+	private int[][] field;
+	private int size;
+	private boolean isBlocked;
+	private boolean isFree;
+	private MatrixTools matrixTools = new MatrixTools();
+	private String fieldId;
+
+	/**
+	 * Konstruktor eins Spielfeldes
+	 * @param size Seitengröße des Spielfeldes (quadratisch)
+	 */
+	public BattleField(int size) {
+		this.size = size;
+		this.field = new int[this.size][this.size];
+		initField();
+	}
+
+	/**
+	 * Initialisiert Matrix in ausgewälter größe und platziert 
+	 * Tilden als Startwerte (Leeres Spielfeld)
+	 */
+	private void initField(){
+		field = matrixTools.initMatrix(field);
+	}
+
+	/**
+	 * @return gibt das Spielfeld zurück
+	 */
+	public int[][] getField() {
+		return this.field;
+	}
+
+	/**
+	 * @return gibt die Größe des Spielfeldes zurück
+	 */
+	public int getSize() {
+		return this.size;
+	}
+
+	/**
+	 * @return gibt die Id des Spielfeldes zurück
+	 */
+	public String getId() {
+		return this.fieldId;
+	}
+
+	/**
+	 * @return gibt zurück, ob das Spielfeld 
+	 */
+	public boolean isBlocked() {
+		return this.isBlocked;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isFree() {
+		return this.isFree;
+	} 
+
+	/**
+	 * Druckt das Spielfeld auf der Konsole aus
+	 */
+	public void printPrivateField(){
+		matrixTools.printPrivateField(this.field);
+	}
+
+	/**
+	 * Druckt das Spielfeld auf der Konsole aus
+	 */
+	public void printPublicField(){
+		matrixTools.printPublicField(this.field);
+	}
+	
+	/**
+	 * @param String  - setzt die Id des Spielfeldes 
+	 */
+	public void setId(String id) {
+		this.fieldId = id;
+	}
+
+	/**
+	 * Setzen der Schiffe auf dem Spielfeld, sofern möglich
+	 * @param ship - Schifftyp (ENUM - EShipType)
+	 * @param iPos - X-Koordinaten des Startfeldes
+	 * @param jPos - Y-Koordinate des Startfeldes
+	 * @param orientation - Ausrichtung v oder h
+	 * @return gibt zurück ob das Schiff platziert werden konnte
+	 */
+	public boolean setShips(EShipType ship, int iPos, int jPos, char orientation){
+		boolean isFree = true;
+		if( (isFree = matrixTools.checkPrivateFields(iPos, jPos, orientation, field, ship)) == true){
+			field = matrixTools.addMatrix(iPos, jPos, orientation, field, ship);
+		}
+		return isFree;
+
+	}
+
+
+	public void setAttack(EShipType ship, int[] coordinates, char orientation, Player player, BattleField privateField){
+		matrixTools.attackField(ship, coordinates, orientation, player, this.field, privateField.getField());
+
+	}
+
+
+}

@@ -1,0 +1,121 @@
+package GameShips;
+
+/**
+ * @author ML
+ * 13.04.2015 version 1.0.0 
+ */
+public class Ship {
+
+	protected int shipSize;
+	protected int shootArea;
+	protected int reloadTime;
+	protected int reloadLeft;
+	protected boolean isReady;
+	protected boolean isSunk;
+	protected int shotAtRound;
+	protected int[][] coordinates;
+	protected char orientation;
+
+	public Ship(int shipSize, int reloadTime, int shootArea) {
+		this.shipSize = shipSize;
+		this.isReady = true;
+		this.reloadTime = reloadTime;
+		this.shootArea = shootArea;
+		this.reloadLeft = this.reloadTime;
+		this.isSunk = false;
+		this.shotAtRound = 0;
+		this.coordinates = new int[shipSize][2];
+		this.orientation = 'h';
+	}
+
+
+
+	/**
+	 * @return int Gibt die größe des Schiffes zurück
+	 * 
+	 */
+	public int getShipSize() {
+		return this.shipSize;
+	}
+
+	/**
+	 * @return int[] Gibt die Koordinaten des Schiffes zurück
+	 * 
+	 */
+	public int[][] getCoordinates() {
+		return this.coordinates;
+	}
+	/**
+	 * @return char Gibt die Ausrichtung des Schiffes zurück
+	 * 
+	 */
+	public char getOrientation() {
+		return this.orientation;
+	}
+
+
+	/**
+	 * @return int Gibt die dauer der Nachladezeit zurück
+	 */
+	public int getReloadTime() {
+		return reloadTime;
+	}
+
+
+	/**
+	 * @return int Gibt die Schussfläche des Schiffes zurück
+	 */
+	public int getShootArea() {
+		return shootArea;
+	}
+
+
+	/**
+	 * startet nach jedem Schuss die nachladezeit
+	 */
+	public void shoot(int round) {
+		this.isReady = false;
+		this.shotAtRound = round;
+	}
+
+	/**
+	 *  int[] Setzt die Koordinaten des Schiffes zurück
+	 * 
+	 */
+	public void setStartPosition(int[] coordinates) {
+		this.coordinates[0][0] = coordinates[0];
+		this.coordinates[0][1] = coordinates[1];
+	}
+	/**
+	 * char Setzt die Ausrichtung des Schiffes zurück
+	 * 
+	 */
+	public void setOrientation(char orientation) {
+		this.orientation = orientation;
+	}
+
+	public boolean isSunk(){
+		return this.isSunk;
+	}
+
+	/**
+	 * @return boolean Gibt zurück, ob das Schiff bereit  zum Schiessen ist,
+	 * oder sich noch in der Ladezeit befindet
+	 */
+	public boolean isLoaded(int askedRound){
+		int roundsPast = askedRound - this.shotAtRound;
+
+		if(this.isReady == false){
+			if((roundsPast % reloadTime) == 0){
+				this.isReady = true;
+			}
+			else{
+				this.isReady = false;
+			}
+		}
+		return this.isReady;
+	}
+
+
+
+}

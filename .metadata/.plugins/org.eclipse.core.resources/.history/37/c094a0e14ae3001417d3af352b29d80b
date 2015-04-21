@@ -1,0 +1,177 @@
+package GameTools;
+import GameShips.Ship;
+
+public class PositionShipToField {
+
+	public void positionShip(EShipType shipType){
+
+
+
+
+		IO.println("Bitte geben sie die Koordinaten ein(X, Y)");
+
+		/*
+		 * der Benutzer aufgefordert seine Schiffe zu positionieren
+		 * Solange wie die eingegebenen Koordinaten ungültig sind,
+		 * wird erneut aufgefordert das Schiff zu positionieren
+		 */
+
+		switch(shipType){
+		case DESTROYER:
+
+			break;
+
+		case CORVETTE:
+			break;
+
+		case FRIGATE:
+			break;
+
+		case SUBMARINE:
+			break;
+
+		}
+
+
+	}
+
+	private void setDestroyer(){
+		//ZERSTÖRER
+		IO.println("Zerstörer");
+		boolean checked = false;
+
+		while(checked == false){
+
+			String pos = IO.readString();
+			int[] koordinaten = checkPos(pos);
+
+			if(koordinaten == null){
+				IO.println("Fehler in der Eingabe! (X, Y)");
+			}
+			else{
+				IO.println("Horizontal h \nVertikal v");
+				char orientation = IO.readChar();
+				if(player[i].getField().setShips(EShipType.DESTROYER, koordinaten[0], koordinaten[1], orientation) == true){
+					player[i].getField().printField();
+					checked = true;
+				}
+				else{
+					IO.println("Schiff kann dort nicht positioniert werden!\nBitte erneut Koordinaten eingeben");
+				}
+			}
+		}
+	}	
+}
+
+
+
+//FREGATTE
+for(int f = frigate; f > 0; f--){
+	IO.println("Fregatte (" + f + ")");
+	boolean checked = false;
+
+	while(checked == false){
+
+		String pos = IO.readString();
+		int[] koordinaten = checkPos(pos);
+
+		if(koordinaten == null){
+			IO.println("Fehler in der Eingabe! (X, Y)");
+		}
+		else{
+			IO.println("Horizontal h \nVertikal v");
+			char orientation = IO.readChar();
+			if(player[i].getField().setShips(EShipType.FRIGATE, koordinaten[0], koordinaten[1], orientation) == true){
+				player[i].getField().printField();
+				checked = true;
+			}
+			else{
+				IO.println("Schiff kann dort nicht positioniert werden!\nBitte erneut Koordinaten eingeben");
+			}
+		}
+	}
+}
+
+//KORVETTE
+for(int k = corvette; k > 0; k--){
+	IO.println("Korvette (" + k + ")");
+	boolean checked = false;
+
+	while(checked == false){
+
+		String pos = IO.readString();
+		int[] koordinaten = checkPos(pos);
+
+		if(koordinaten == null){
+			IO.println("Fehler in der Eingabe! (X, Y)");
+		}
+		else{
+			IO.println("Horizontal h \nVertikal v");
+			char orientation = IO.readChar();
+			if(player[i].getField().setShips(EShipType.CORVETTE, koordinaten[0], koordinaten[1], orientation) == true){
+				player[i].getField().printField();
+				checked = true;
+			}
+			else{
+				IO.println("Schiff kann dort nicht positioniert werden!\nBitte erneut Koordinaten eingeben");
+			}
+		}
+	}
+}
+
+//UBOOT
+for(int s = submarine; s > 0; s--){
+	IO.println("UBoot (" + s + ")");
+	boolean checked = false;
+
+	while(checked == false){
+
+		String pos = IO.readString();
+		int[] koordinaten = checkPos(pos);
+
+		if(koordinaten == null){
+			IO.println("Fehler in der Eingabe! (X, Y)");
+		}
+		else{
+			IO.println("Horizontal h \nVertikal v");
+			char orientation = IO.readChar();
+
+			if(player[i].getField().setShips(EShipType.SUBMARINE, koordinaten[0], koordinaten[1], orientation) == true){
+				player[i].getField().printField();
+				checked = true;
+			}
+			else{
+				IO.println("Schiff kann dort nicht positioniert werden!\nBitte erneut Koordinaten eingeben");
+			}
+		}
+	}
+}
+}
+
+
+/**
+ * @param pos - die zu überprüfenden Koordinaten 
+ * @return Gibt zurück, ob die eingegebenen Koordinaten korrekt sind
+ */
+private int[] checkPos(String pos){
+	pos = pos.replaceAll("\\s+", "");
+	String[] sKoordinaten = pos.split(",");
+	int[] iKoordinaten = new int[2];
+
+	if(sKoordinaten.length != 2){
+		return null;
+	}
+	for(int i = 0; i < 2; i++){
+		int toInt = Integer.parseInt(sKoordinaten[i]);
+		if(toInt < 0 || toInt > fieldSize.length){
+			return null;
+		}
+		else{
+			iKoordinaten[i] = toInt;
+		}
+	}
+
+	return iKoordinaten;
+}
+}
+

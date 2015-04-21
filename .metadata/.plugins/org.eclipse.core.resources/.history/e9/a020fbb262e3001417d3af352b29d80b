@@ -1,0 +1,41 @@
+package GameFields;
+import GamePlayer.Player;
+import GameTools.EShipType;
+import GameTools.MatrixTools;
+
+public class EnemyFields{
+
+	private Player[] gamePlayer;
+	private BattleField[] gameFields;
+	
+	public EnemyFields(int size, Player[] gamePlayer) {
+		this.gameFields = new BattleField[gamePlayer.length];
+		initEnemyGameFields();
+	}
+	
+	
+	private void initEnemyGameFields(){
+		for(int i = 0; i < this.gamePlayer.length; i++){
+			this.gameFields[i].setId(this.gamePlayer[i].getPlayerName());
+		}
+	}
+	
+	private BattleField getEnemyFromEnemies(String enemyId){
+		for(int i = 0; i < this.gameFields.length; i++){
+			if(this.gameFields[i].getId() == enemyId){
+				return this.gameFields[i];
+			}
+		}
+		return null;
+	}
+	
+	public void printEnemyField(String enemyId){
+		BattleField enemyField = this.getEnemyFromEnemies(enemyId);
+		enemyField.printField();
+	}
+	
+	public void attackEnemy(String enemyId, int iVal, int jVal, EShipType ship){
+		
+	}
+
+}
