@@ -9,6 +9,7 @@ public class Destroyer extends Ship {
 	 */
 	public Destroyer() {
 		super(5, 3, 3);
+		super.shipType = "Zerstörer";
 	}
 	
 }

@@ -2,7 +2,7 @@ package GameTools;
 /** 
  * macht das Einlesen von Einfachen Daten einfacher 
  * durch Verdecken des Exception-Handlings
-*/
+ */
 
 
 import java.io.*;
@@ -10,7 +10,7 @@ import java.io.*;
 public class IO {
 
 	public static BufferedReader input
-          = new BufferedReader(new InputStreamReader(System.in));
+	= new BufferedReader(new InputStreamReader(System.in));
 	public static String eingabe = "";
 
 	// Einlesen eines char
@@ -23,6 +23,7 @@ public class IO {
 			return '\0';
 		}
 	}
+	
 
 	// Einlesen eines short
 	public static short readShort() {
@@ -44,7 +45,29 @@ public class IO {
 			return string_to_int.intValue();
 		}
 		catch (Exception e) {
-		  return 0;
+			return 0;
+		}
+	}	
+	// Einlesen eines int
+	public static int readShipInt() {
+		try {
+			eingabe = input.readLine();
+			Integer string_to_int = new Integer(eingabe);
+			return string_to_int.intValue();
+		}
+		catch (Exception e) {
+			return 1;
+		}
+	}
+	// Einlesen eines int
+	public static int readEnemyInt() {
+		try {
+			eingabe = input.readLine();
+			Integer string_to_int = new Integer(eingabe);
+			return string_to_int.intValue();
+		}
+		catch (Exception e) {
+			return -1;
 		}
 	}
 
@@ -93,38 +116,38 @@ public class IO {
 			return "";
 		}
 	}
-	
+
 	// Ausgabe
 	public static void println(String s){
 		System.out.println(s);
 	}
-	
+
 	public static void print(String s){
 		System.out.print(s);
 	}
-	
-		public static void println(double s){
+
+	public static void println(double s){
 		System.out.println(s);
 	}
-	
+
 	public static void print(double s){
 		System.out.print(s);
 	}
-		public static void println(long s){
+	public static void println(long s){
 		System.out.println(s);
 	}
-	
+
 	public static void print(long s){
 		System.out.print(s);
 	}
-		public static void println(char s){
+	public static void println(char s){
 		System.out.println(s);
 	}
-	
+
 	public static void print(char s){
 		System.out.print(s);
 	}
-	
-	
+
+
 }
 

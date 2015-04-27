@@ -9,6 +9,7 @@ public class Frigate extends Ship {
 	 */
 	public Frigate() {
 		super(4, 2, 2);
+		super.shipType = "Frigatte";
 	}
 	
 }

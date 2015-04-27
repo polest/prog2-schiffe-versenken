@@ -12,10 +12,12 @@
 <fullyQualifiedTypeName name="java.util.ArrayList"/>
 <fullyQualifiedTypeName name="GameShips.Destroyer"/>
 <fullyQualifiedTypeName name="java.lang.System"/>
-<fullyQualifiedTypeName name="GameTools.EShipType"/>
 <fullyQualifiedTypeName name="GameFields.BattleField"/>
 <fullyQualifiedTypeName name="GameShips.Frigate"/>
 <fullyQualifiedTypeName name="GameShips.Corvette"/>
 <fullyQualifiedTypeName name="GameShips.Submarine"/>
 <fullyQualifiedTypeName name="GamePlayer.Player"/>
+<fullyQualifiedTypeName name="GameTools.EShipType"/>
+<fullyQualifiedTypeName name="java.awt.MultipleGradientPaint.ColorSpaceType"/>
+<fullyQualifiedTypeName name="GameTools.ColoredPrint.EPrintColor"/>
 </qualifiedTypeNameHistroy>

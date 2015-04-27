@@ -1,4 +1,6 @@
 package GameLogic;
+import GameTools.ColoredPrint;
+import GameTools.ColoredPrint.EPrintColor;
 import GameTools.IO;
 
 
@@ -15,13 +17,14 @@ public class GameOptions {
 	private final int totalSizeOfShipSpaceDefault = 50;
 
 	private int spaceLeftInField;
-	private String errorString;
 
 	private final int destroyerSize;
 	private final int frigateSize;
 	private final int corvetteSize;
 	private final int submarineSize;
 	private final int defaultWaterSpaces = 10;
+	
+	private ColoredPrint colorPrint;
 
 
 	/**
@@ -41,13 +44,12 @@ public class GameOptions {
 		this.playerNames[0] = "Spieler 1";     
 		this.playerNames[1] = "Spieler 2";
 
-		this.errorString = "Diese Anzahl von Schiffen bei einer Feldgröße von "
-				+ this.fieldSize + " ist nicht möglich. Bitte erneut eingeben!";
-
 		this.destroyerSize = 21;
 		this.frigateSize = 18;
 		this.corvetteSize = 15;
 		this.submarineSize = 12;
+		
+		this.colorPrint = new ColoredPrint();
 	}
 
 	/**
@@ -60,7 +62,7 @@ public class GameOptions {
 
 		initPlayer();
 		initField();
-		this.spaceLeftInField = ( ( this.fieldSize * this.fieldSize) - totalSizeOfShipSpaceDefault )  + (this.fieldSize * 4);
+		this.spaceLeftInField = this.fieldSize * this.fieldSize;
 		initShips();
 	}
 
@@ -209,32 +211,30 @@ public class GameOptions {
 				+"Zerströrer:");
 
 		while(checked == false){
-			temp = IO.readInt();
-			if(temp > 1){
-				temp = temp - 1;
+			temp = IO.readShipInt();
+			if(temp > 0){
 
 				int neededSpace = temp  * this.destroyerSize;
-				if(spaceLeftInField > neededSpace){
-					if((spaceLeftInField % neededSpace ) > this.defaultWaterSpaces){
-						this.destroyer = 1 + temp;
+				if(this.spaceLeftInField > neededSpace){
+					if((this.spaceLeftInField - neededSpace ) > this.defaultWaterSpaces){
+						this.destroyer = temp;
 						checked = true;
-						spaceLeftInField = spaceLeftInField - (temp * this.destroyerSize);
+						this.spaceLeftInField = this.spaceLeftInField - neededSpace;
 					}
 					else{
-						IO.println(errorString);
+						IO.println("Diese Anzahl von Schiffen bei einer Feldgröße von "
+								+ this.fieldSize + " ist nicht möglich. Bitte erneut eingeben!");
 					}
 				}
 				else{
-					IO.println(errorString);
+					IO.println("Diese Anzahl von Schiffen bei einer Feldgröße von "
+							+ this.fieldSize + " ist nicht möglich. Bitte erneut eingeben!");
 				}
 
 			}
 			else{
 				checked = true;
 				this.destroyer = temp;
-				if(this.destroyer == 0){
-					spaceLeftInField = spaceLeftInField - this.destroyerSize;
-				}
 			}
 		}
 
@@ -247,32 +247,31 @@ public class GameOptions {
 		IO.println("Fregatten:");
 
 		while(checked == false){
-			temp = IO.readInt();
-			if(temp > 1){
-
-				temp = temp - 1;
+			temp = IO.readShipInt();
+			if(temp > 0){
 
 				int neededSpace = temp * this.frigateSize;
-				if(spaceLeftInField > neededSpace){
-					if((spaceLeftInField % ( temp * this.frigateSize) ) > this.defaultWaterSpaces){
-						this.frigate = 1 + temp;
+				if(this.spaceLeftInField > neededSpace){
+					if((this.spaceLeftInField - neededSpace) > this.defaultWaterSpaces){
+						this.frigate =  temp;
 						checked = true;
-						spaceLeftInField = spaceLeftInField - (temp * this.frigateSize);
+						this.spaceLeftInField = this.spaceLeftInField - neededSpace;
 					}
 					else{
-						IO.println(errorString);
+						IO.println("Diese Anzahl von Schiffen bei einer Feldgröße von "
+								+ this.fieldSize + " ist nicht möglich. Bitte erneut eingeben!");
+					
 					}
 				}
 				else{
-					IO.println(errorString);
+					IO.println("Diese Anzahl von Schiffen bei einer Feldgröße von "
+							+ this.fieldSize + " ist nicht möglich. Bitte erneut eingeben!");
+				
 				}
 			}
 			else{
 				checked = true;
 				this.frigate = temp;
-				if(this.frigate == 0){
-					spaceLeftInField = spaceLeftInField - this.frigateSize;
-				}
 			}
 
 		}
@@ -285,31 +284,31 @@ public class GameOptions {
 		IO.println("Korvetten:");
 
 		while(checked == false){
-			temp = IO.readInt();
+			temp = IO.readShipInt();
 
-			if(temp > 1){
-				temp = temp - 1;
+			if(temp > 0){
 				int neededSpace = (temp * this.corvetteSize);
-				if(spaceLeftInField > neededSpace){
-					if((spaceLeftInField % (temp  * this.corvetteSize) ) > defaultWaterSpaces){
-						this.corvette = 1 + temp;
+				if(this.spaceLeftInField > neededSpace){
+					if((this.spaceLeftInField - neededSpace ) > this.defaultWaterSpaces){
 						checked = true;
-						spaceLeftInField = spaceLeftInField - (temp * this.corvetteSize);
+						this.spaceLeftInField = this.spaceLeftInField - neededSpace;
 					}
 					else{
-						IO.println(errorString);
+						this.colorPrint.println(EPrintColor.RED, "Diese Anzahl von Schiffen bei einer Feldgröße von "
+								+ this.fieldSize + " ist nicht möglich. Bitte erneut eingeben!");
+					
 					}
 				}
 				else{
-					IO.println(errorString);
+					this.colorPrint.println(EPrintColor.RED,"Diese Anzahl von Schiffen bei einer Feldgröße von "
+							+ this.fieldSize + " ist nicht möglich. Bitte erneut eingeben!");
+				
 				}
 			}
 			else{
 				checked = true;
 				this.corvette = temp;
-				if(this.corvette == 0){
-					spaceLeftInField = spaceLeftInField - this.corvetteSize;
-				}
+				
 			}
 
 		}
@@ -324,32 +323,29 @@ public class GameOptions {
 		IO.println("UBoote:");
 
 		while(checked == false){
-			temp = IO.readInt();
-			if(temp > 1){	
-				temp = temp - 1;
-
+			temp = IO.readShipInt();
+			if(temp > 0){	
 				int neededSpace = (temp * this.submarineSize);
-				if(spaceLeftInField > neededSpace){
-					if((spaceLeftInField % (temp  * this.submarineSize) ) > defaultWaterSpaces){
-						this.submarine = 1 + temp;
+				if(this.spaceLeftInField > neededSpace){
+					if((this.spaceLeftInField - neededSpace) > defaultWaterSpaces){
 						checked = true;
-						spaceLeftInField = spaceLeftInField - (temp * this.submarineSize);
+						this.spaceLeftInField = this.spaceLeftInField - neededSpace;
 					}
 					else{
-						IO.println(errorString);
+						IO.println("Diese Anzahl von Schiffen bei einer Feldgröße von "
+								+ this.fieldSize + " ist nicht möglich. Bitte erneut eingeben!");
+					
 					}
 				}
 				else{
-					IO.println(errorString);
+					IO.println("Diese Anzahl von Schiffen bei einer Feldgröße von "
+							+ this.fieldSize + " ist nicht möglich. Bitte erneut eingeben!");
+				
 				}
 			}
 			else{
 				checked = true;
 				this.submarine = temp;
-				if(this.submarine == 0){
-					spaceLeftInField = spaceLeftInField - this.submarineSize;
-				}
-
 			}
 		}
 	}

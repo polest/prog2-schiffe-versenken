@@ -9,5 +9,6 @@ public class Corvette extends Ship {
 	 */
 	public Corvette() {
 		super(3, 1, 1);
+		super.shipType = "Korvette";
 	}
 }

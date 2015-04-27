@@ -103,7 +103,6 @@ public class BattleField {
 
 	}
 
-
 	public void setAttack(EShipType ship, int[] coordinates, char orientation, Player player){
 		matrixTools.attackField(ship, coordinates, orientation, player);
 

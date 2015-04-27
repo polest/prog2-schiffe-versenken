@@ -9,5 +9,6 @@ public class Submarine extends Ship{
 	 */
 	public Submarine() {
 		super(2, 1, 1);
+		super.shipType = "UBoot";
 	}
 }

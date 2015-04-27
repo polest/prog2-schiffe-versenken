@@ -79,6 +79,12 @@ public class Player {
 	 * oder ausgeschieden ist
 	 */
 	public boolean isAlive() {
+		if(getTotalShips() > 0){
+			this.isAlive = true;
+		}
+		else{
+			this.isAlive = false;
+		}
 		return isAlive;
 	}
 
@@ -86,7 +92,38 @@ public class Player {
 	 * @return Gibt die gesamt Anzahl der Schiffe des Spielers an
 	 */
 	public int getTotalShips() {
-		return totalShips;
+		int destroyerCount = 0;
+		int frigateCount = 0;
+		int corvetteCount = 0;
+		int submarineCount = 0;
+		
+		for(int d = 0; d < this.getDestroyer().length; d++){
+			if(this.destroyer[d].isSunk() == false){
+				destroyerCount++;
+			}
+		}
+		
+		for(int f = 0; f < this.getFrigate().length; f++){
+			if(this.frigate[f].isSunk() == false){
+				frigateCount++;
+			}
+		}
+		for(int c = 0; c < this.getCorvette().length; c++){
+			if(this.corvette[c].isSunk() == false){
+				corvetteCount++;
+			}
+		}
+		for(int s = 0; s < this.getSubmarine().length; s++){
+			if(this.submarine[s].isSunk() == false){
+				submarineCount++;
+			}
+		}
+		
+		this.totalShips = destroyerCount + frigateCount
+				 + corvetteCount + submarineCount;
+		 
+		
+		return this.totalShips;
 	}
 
 	/**

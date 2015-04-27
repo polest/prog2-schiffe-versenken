@@ -1,0 +1,365 @@
+package GameLogic;
+import GameTools.IO;
+
+
+public class GameOptions {
+
+	private int player;
+	private String[] playerNames;
+	private int fieldSize;
+	private int destroyer;
+	private int frigate;
+	private int corvette;
+	private int submarine;
+	private int ships;
+	private final int totalSizeOfShipSpaceDefault = 50;
+
+	private int spaceLeftInField;
+
+	private final int destroyerSize;
+	private final int frigateSize;
+	private final int corvetteSize;
+	private final int submarineSize;
+	private final int defaultWaterSpaces = 10;
+
+
+	/**
+	 * Kontruktor der Optionen
+	 * Setzt Standard Werte der Einstellungen
+	 */
+	public GameOptions(){
+		this.player = 2;
+		this.fieldSize = 10;
+		this.destroyer = 1;
+		this.frigate = 1;
+		this.corvette = 1;
+		this.submarine = 1;
+		this.ships = 4;
+
+		this.playerNames = new String[2];
+		this.playerNames[0] = "Spieler 1";     
+		this.playerNames[1] = "Spieler 2";
+
+		this.destroyerSize = 21;
+		this.frigateSize = 18;
+		this.corvetteSize = 15;
+		this.submarineSize = 12;
+	}
+
+	/**
+	 * Spielstart ruft die Optionen für Spieler, Spielfeld und Schiffe auf
+	 */
+	public void initGame(){
+		IO.println("Willkommen bei BATTLESHIP special LARS edition!\n"
+				+ "um das Spiel zu beginnen, müssen Sie zunächst einmal\n"
+				+ "das Spiel konfigurieren.");
+
+		initPlayer();
+		initField();
+		this.spaceLeftInField = this.fieldSize * this.fieldSize;
+		initShips();
+	}
+
+
+	/**
+	 * @return gibt die Anzahl der Spieler zurück
+	 */
+	public int getPlayer() {
+		return player;
+	}
+
+	/**
+	 * @return gibt die festgelegte Feldgröße zurück
+	 */
+	public int getFieldSize() {
+		return fieldSize;
+	}
+
+	/**
+	 * @return gibt die festgelegte Anzahl an Zerstörern zurück
+	 */
+	public int getDestroyer() {
+		return destroyer;
+	}
+
+	/**
+	 * @return gibt die festgelegte Anzahl an Fregatten zurück
+	 */
+	public int getFrigate() {
+		return this.frigate;
+	}
+
+
+	/**
+	 * @return gibt die festgelegte Anzahl an Korvetten zurück
+	 */
+	public int getCorvette() {
+		return corvette;
+	}
+
+	/**
+	 * @return gibt die festgelegte Anzahl an UBooten zurück
+	 */
+	public int getSubmarine() {
+		return submarine;
+	}
+
+
+	/**
+	 * @return gibt die Liste der Spielernamen zurück
+	 */
+	public String[] getPlayerNames(){
+		return this.playerNames;
+	}
+
+	/**
+	 * @return gibt die gesamt Anzahl an Schiffen zurück
+	 */
+	public int getShips(){
+		return ships;
+	}
+
+	/**
+	 * Einstellungen der Spieleranzahl und ihre Namen
+	 */
+	private void initPlayer(){
+
+		IO.println("Bitte wählen sie die Anzahl der Spieler aus [2-6]: ");
+		int count = IO.readInt();
+
+		while(count < 2 || count > 6){
+			IO.println("Ungültige Eingabe. Bitte zwischen 2-6 auswählen!");
+			count = IO.readInt();
+		}
+
+		this.player = count;
+		this.playerNames = new String[count];
+		for(int i = 0; i < count; i++){
+			int c = i+1;
+			boolean nameUnique = true;
+
+			IO.println("Spieler " + c + " Name: ");
+			String tempName;
+			do{
+				 tempName= IO.readString();
+				 nameUnique = true;
+
+				for(int t = 0; t < this.playerNames.length; t++){
+
+					if(this.playerNames[t] != null){
+						if(this.playerNames[t].equals(tempName)){
+							System.out.println("Name schon vorhanden! Bitte erneut eingeben: ");
+							nameUnique = false;	
+						}
+					}
+				}
+
+			}while(nameUnique == false);
+			this.playerNames[i] = tempName;	
+		}
+	}
+
+	/**
+	 * Einstellung der Größe des Spielfeldes
+	 */
+	private void initField(){
+		IO.println("Bitte geben sie die Seitengröße des quadratischen Feldes ein: (mind. 9!)");
+
+		int count = IO.readInt();
+
+		while(count < 9 || count > 50){
+			if(count != 50){
+				IO.println("Ungültige Eingabe. Bitte eine Zahl größer als 8 eingeben!");
+			}
+			else{
+				IO.println("Ein Spielfeld von einer Größe ab 50 ist zu riesig! Erneut eingeben:");
+
+			}
+			count = IO.readInt();
+		}
+
+		this.fieldSize = count;
+	}
+
+	/**
+	 * Einstellung der Anzahl jeweiliger Schiffe
+	 */
+	private void initShips(){
+		IO.println("Wählen sie die Anzahl der jeweiligen Schiffe." 
+				+ "\nBei nicht eingegebener Anzahl wird der standart Wert von 1 je Schiff eingetragen.");
+
+		this.initDestroyer();
+		this.initFrigate();
+		this.initCorvette();
+		this.initSubmarine();
+
+		this.ships = this.destroyer + this.frigate + this.corvette + this.submarine;
+		this.checkShipsCount(ships);
+	}
+
+	private void initDestroyer(){
+		int temp = 0;
+		boolean checked = false;
+
+		IO.println("Bitte geben sie nun die Anzahl der Schiffe an:\n"
+				+"Zerströrer:");
+
+		while(checked == false){
+			temp = IO.readShipInt();
+			if(temp > 0){
+
+				int neededSpace = temp  * this.destroyerSize;
+				if(this.spaceLeftInField > neededSpace){
+					if((this.spaceLeftInField - neededSpace ) > this.defaultWaterSpaces){
+						this.destroyer = temp;
+						checked = true;
+						this.spaceLeftInField = this.spaceLeftInField - neededSpace;
+					}
+					else{
+						IO.println("Diese Anzahl von Schiffen bei einer Feldgröße von "
+								+ this.fieldSize + " ist nicht möglich. Bitte erneut eingeben!");
+					}
+				}
+				else{
+					IO.println("Diese Anzahl von Schiffen bei einer Feldgröße von "
+							+ this.fieldSize + " ist nicht möglich. Bitte erneut eingeben!");
+				}
+
+			}
+			else{
+				checked = true;
+				this.destroyer = temp;
+			}
+		}
+
+	}
+
+	private void initFrigate(){
+		int temp = 0;
+		boolean checked = false;
+
+		IO.println("Fregatten:");
+
+		while(checked == false){
+			temp = IO.readShipInt();
+			if(temp > 0){
+
+				int neededSpace = temp * this.frigateSize;
+				if(this.spaceLeftInField > neededSpace){
+					if((this.spaceLeftInField - neededSpace) > this.defaultWaterSpaces){
+						this.frigate =  temp;
+						checked = true;
+						this.spaceLeftInField = this.spaceLeftInField - neededSpace;
+					}
+					else{
+						IO.println("Diese Anzahl von Schiffen bei einer Feldgröße von "
+								+ this.fieldSize + " ist nicht möglich. Bitte erneut eingeben!");
+					
+					}
+				}
+				else{
+					IO.println("Diese Anzahl von Schiffen bei einer Feldgröße von "
+							+ this.fieldSize + " ist nicht möglich. Bitte erneut eingeben!");
+				
+				}
+			}
+			else{
+				checked = true;
+				this.frigate = temp;
+			}
+
+		}
+	}
+
+	private void initCorvette(){
+		int temp = 0;
+		boolean checked = false;
+
+		IO.println("Korvetten:");
+
+		while(checked == false){
+			temp = IO.readShipInt();
+
+			if(temp > 0){
+				int neededSpace = (temp * this.corvetteSize);
+				if(this.spaceLeftInField > neededSpace){
+					if((this.spaceLeftInField - neededSpace ) > this.defaultWaterSpaces){
+						checked = true;
+						this.spaceLeftInField = this.spaceLeftInField - neededSpace;
+					}
+					else{
+						IO.println("Diese Anzahl von Schiffen bei einer Feldgröße von "
+								+ this.fieldSize + " ist nicht möglich. Bitte erneut eingeben!");
+					
+					}
+				}
+				else{
+					IO.println("Diese Anzahl von Schiffen bei einer Feldgröße von "
+							+ this.fieldSize + " ist nicht möglich. Bitte erneut eingeben!");
+				
+				}
+			}
+			else{
+				checked = true;
+				this.corvette = temp;
+				
+			}
+
+		}
+
+	}
+
+	private void initSubmarine(){
+
+		int temp = 0;
+		boolean checked = false;
+
+		IO.println("UBoote:");
+
+		while(checked == false){
+			temp = IO.readShipInt();
+			if(temp > 0){	
+				int neededSpace = (temp * this.submarineSize);
+				if(this.spaceLeftInField > neededSpace){
+					if((this.spaceLeftInField - neededSpace) > defaultWaterSpaces){
+						checked = true;
+						this.spaceLeftInField = this.spaceLeftInField - neededSpace;
+					}
+					else{
+						IO.println("Diese Anzahl von Schiffen bei einer Feldgröße von "
+								+ this.fieldSize + " ist nicht möglich. Bitte erneut eingeben!");
+					
+					}
+				}
+				else{
+					IO.println("Diese Anzahl von Schiffen bei einer Feldgröße von "
+							+ this.fieldSize + " ist nicht möglich. Bitte erneut eingeben!");
+				
+				}
+			}
+			else{
+				checked = true;
+				this.submarine = temp;
+			}
+		}
+	}
+
+	private void checkShipsCount(int ships){
+		if(this.ships <= 0){
+			IO.println("Es wurden keine Schiffe für das Spiel festgelegt. \nSpiel kann nich fortgesetzt werden."
+					+ "\nUm das Spiel erneut zu Starten drücken sie N und zum Beenden irgendeine andere Taste");
+			char result = IO.readChar();
+
+			java.lang.Character.toLowerCase(result);
+
+			if(result == 'n'){
+				this.initShips();
+			}
+			else{
+				System.exit(0);
+			}
+		}
+	}
+
+}
+

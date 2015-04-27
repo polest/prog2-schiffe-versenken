@@ -7,27 +7,25 @@ package GameShips;
 public class Ship {
 
 	protected int shipSize;
-	protected int shootArea;
 	protected int reloadTime;
-	protected int reloadLeft;
 	protected boolean isReady;
 	protected boolean isSunk;
 	protected int shotAtRound;
 	protected int[][] coordinates;
 	protected char orientation;
 	protected int hitCount;
+	protected String shipType;
 
 	public Ship(int shipSize, int reloadTime, int shootArea) {
 		this.shipSize = shipSize;
 		this.isReady = true;
 		this.reloadTime = reloadTime;
-		this.shootArea = shootArea;
-		this.reloadLeft = this.reloadTime;
 		this.isSunk = false;
 		this.shotAtRound = 0;
 		this.coordinates = new int[shipSize][2];
 		this.orientation = 'h';
 		this.hitCount = 0;
+		this.shipType = "Ship";
 	}
 
 
@@ -62,15 +60,6 @@ public class Ship {
 	public int getReloadTime() {
 		return reloadTime;
 	}
-
-
-	/**
-	 * @return int Gibt die Schussfläche des Schiffes zurück
-	 */
-	public int getShootArea() {
-		return shootArea;
-	}
-
 
 	/**
 	 * startet nach jedem Schuss die nachladezeit
@@ -108,10 +97,10 @@ public class Ship {
 	 * oder sich noch in der Ladezeit befindet
 	 */
 	public boolean isLoaded(int askedRound){
-		int roundsPast = askedRound - ( this.shotAtRound+1 );
+		int roundsPast = askedRound - (this.shotAtRound+1 );
 
 		if(this.isReady == false){
-			if((roundsPast % reloadTime) == 0){
+			if(roundsPast > reloadTime){
 				this.isReady = true;
 			}
 			else{
@@ -139,19 +128,15 @@ public class Ship {
 			this.coordinates[i][0] = x; 
 			this.coordinates[i][1] = y;
 
-
-
 		}
 	}
 
 	private void checkShipIsSunk(){
-
-		if(this.hitCount < this.shipSize){
-			this.isSunk = false;
-		}
-		else{
-			this.isSunk = true;
-			System.out.println("TREFFER! Der Zerstörer ist gesunken....");
+		if(this.isSunk == false){
+			if(this.hitCount == this.shipSize){
+				this.isSunk = true;
+				System.out.println("TREFFER! " + this.shipType  + " ist gesunken....");
+			}
 		}
 	}
 
@@ -161,8 +146,8 @@ public class Ship {
 			if(this.coordinates[i][0] == x && this.coordinates[i][1] == y){
 				this.hitCount++;
 				this.checkShipIsSunk();
+				this.refreshCoordinatesLeft(i);
 				return true;
-
 			}
 		}
 
@@ -170,5 +155,21 @@ public class Ship {
 	}
 
 
+	private void refreshCoordinatesLeft(int pos){
+		int[][] newCoordinates = new int[this.coordinates.length-1][2];
+		int newIndex = 0;
+		for(int i = 0;  i < this.coordinates.length; i++){
+
+			if(i != pos){
+				newCoordinates[newIndex][0] = this.coordinates[i][0];
+				newCoordinates[newIndex][1] = this.coordinates[i][1];
+				newIndex++;
+			}
+
+		}
+
+		this.coordinates = newCoordinates;
+
+	}
 
 }

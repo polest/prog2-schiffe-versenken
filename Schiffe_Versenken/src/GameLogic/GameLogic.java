@@ -1,8 +1,10 @@
 package GameLogic;
 import GameFields.BattleField;
 import GamePlayer.Player;
+import GameTools.ColoredPrint;
 import GameTools.EShipType;
 import GameTools.IO;
+import GameTools.ColoredPrint.EPrintColor;
 
 
 /**
@@ -17,17 +19,35 @@ public class GameLogic
 	private int fieldSize;
 	private GameOptions game = new GameOptions();
 	private int round = 1;
+	private boolean gameHasEnded = false;
+	private String winner = "";
+	private ColoredPrint colorPrint = new ColoredPrint();;
+	private int playerInGame;
 
 
-	public void StartGame(){
+
+	public void startGame(){
 
 		initGameOptions();
 		initGamePlayer();
 		setShipsToField();
+
 		for(int i = 0; i < 50; i++){
 			System.out.println("");
 		}
-		startRound();
+
+		this.playerInGame = this.player.length;
+		
+		while(this.gameHasEnded == false){
+
+			for(int i = 0; i < this.player.length; i++){
+				startRound(i);
+				this.round++;
+			}
+
+		}
+
+		System.out.println("Das Spiel ist vorbei! \"" + winner + "\" hat gewonnen!");
 	}
 
 	/**
@@ -87,6 +107,7 @@ public class GameLogic
 			 * wird erneut aufgefordert das Schiff zu positionieren
 			 */
 
+
 			//ZERSTÖRER
 			for(int d = 0; d < destroyer; d++){
 				IO.println("Zerstörer (" + (d+1) + ")");
@@ -103,10 +124,10 @@ public class GameLogic
 					else{
 						IO.println("Horizontal h \nVertikal v");
 						char orientation = IO.readChar();
-						
+
 						this.player[i].getDestroyer()[d].setStartPosition(koordinaten);
 						this.player[i].getDestroyer()[d].setOrientation(orientation);
-						
+
 						if(player[i].getPrivateField().setShips(EShipType.DESTROYER, koordinaten[0], koordinaten[1], orientation) == true){
 							player[i].getPrivateField().printPrivateField(player[i].getPlayerName());
 							checked = true;
@@ -137,7 +158,7 @@ public class GameLogic
 
 						this.player[i].getFrigate()[f].setStartPosition(koordinaten);
 						this.player[i].getFrigate()[f].setOrientation(orientation);
-						
+
 						if(player[i].getPrivateField().setShips(EShipType.FRIGATE, koordinaten[0], koordinaten[1], orientation) == true){
 							player[i].getPrivateField().printPrivateField(player[i].getPlayerName());
 							checked = true;
@@ -165,10 +186,10 @@ public class GameLogic
 					else{
 						IO.println("Horizontal h \nVertikal v");
 						char orientation = IO.readChar();
-						
+
 						this.player[i].getCorvette()[k].setStartPosition(koordinaten);
 						this.player[i].getCorvette()[k].setOrientation(orientation);
-					
+
 						if(player[i].getPrivateField().setShips(EShipType.CORVETTE, koordinaten[0], koordinaten[1], orientation) == true){
 							player[i].getPrivateField().printPrivateField(player[i].getPlayerName());
 							checked = true;
@@ -199,7 +220,7 @@ public class GameLogic
 
 						this.player[i].getSubmarine()[s].setStartPosition(koordinaten);
 						this.player[i].getSubmarine()[s].setOrientation(orientation);
-					
+
 						if(player[i].getPrivateField().setShips(EShipType.SUBMARINE, koordinaten[0], koordinaten[1], orientation) == true){
 							player[i].getPrivateField().printPrivateField(player[i].getPlayerName());
 							checked = true;
@@ -241,26 +262,48 @@ public class GameLogic
 			return iKoordinaten;
 		}
 		catch(Exception e){
-			System.out.println("Ungültige Eingabe");
+			this.colorPrint.println(EPrintColor.RED, "Ungültige Eingabe");
 
 		}
 		return null;
 	}
 
-	private void startRound(){
+	private EShipType getShipTypeFromId(int shipId){
+		switch(shipId){
+		case 1: 
+			return EShipType.DESTROYER;
+		case 2: 
+			return EShipType.FRIGATE;
+		case 3: 
+			return EShipType.CORVETTE;
+		case 4: 
+			return EShipType.SUBMARINE;
 
-		boolean gameHasEnded = false;
+		default:
+			return null;
+		}
+	}
+
+	private void startRound(int i){
+
 		int enemy = -1;
 		int shipId = -1;
 		EShipType shipType = null;
 		int[] coordinates = new int[2];
-		char orientation = 'h';
+		char orientation = '-';
+		
+		boolean shipAvailable = false;
 
-		while(gameHasEnded == false){
+		if(this.player[i].isAlive()){
+			this.colorPrint.println(EPrintColor.GREEN, "Runde: " + this.round + "\n");
+			
+			IO.println("Spieler \"" + this.player[i].getPlayerName() + "\" ist an der Reihe.");
 
-			for(int i = 0; i < this.player.length; i++){
-				IO.println("Spieler \"" + this.player[i].getPlayerName() + "\" ist an der Reihe.");
-				
+			while(shipId < 1){
+				shipId = this.chooseShip(i);
+			}
+
+			if(shipId >= 0){
 				if(this.player.length > 2){
 					enemy = this.chooseEnemy(i);
 				}
@@ -273,53 +316,56 @@ public class GameLogic
 					}
 				}
 
-				shipId = this.chooseShip(i);
-
 				this.player[enemy].getPublicField().printPublicField(this.player[enemy].getPlayerName());
+
+				shipType = getShipTypeFromId(shipId);
 
 				coordinates = this.chooseCoordinates();
 
-				System.out.println("Horizontal (h) \nVertikal (v)");
-
-				boolean orientationChecked = false;
-
-				while(orientationChecked == false){
-					char tempOrientation = IO.readChar();
-
-					if(tempOrientation == 'h' || tempOrientation == 'v'){
-						orientationChecked = true;
-						orientation = tempOrientation;
+				if(shipType != EShipType.CORVETTE || shipType != EShipType.SUBMARINE){
+					while(orientation == '-'){
+						orientation = this.chooseOrientation();
 					}
-					else{
-						System.out.println("Fehler! Bitte h oder v eingeben: ");
-					}
-
 				}
-
-				switch(shipId){
-				case 1: 
-					shipType = EShipType.DESTROYER;
-					break;
-				case 2: 
-					shipType = EShipType.FRIGATE;
-					break;
-				case 3: 
-					shipType = EShipType.CORVETTE;
-					break;
-				case 4: 
-					shipType = EShipType.SUBMARINE;
-					break;
-
-
+				else{
+					orientation = 'h';
 				}
-
+				
 				player[i].shoot(shipType, round);
 				player[enemy].getAttack(shipType, coordinates, orientation);
 
-				round++;
+				if(player[enemy].isAlive() == false){
+					System.out.println("VERSENKT! Spieler \"" + player[enemy].getPlayerName() + "\" hat verloren!\n");
+					this.playerInGame--;
+					if(this.playerInGame == 1){
+						gameHasEnded = true;
+						winner = player[i].getPlayerName();
+					}
+
+				}
 			}
 		}
+	}
 
+	private char chooseOrientation(){
+		char orientation = '-';
+		System.out.println("Horizontal (h) \nVertikal (v)");
+
+		boolean orientationChecked = false;
+
+		while(orientationChecked == false){
+			char tempOrientation = IO.readChar();
+
+			if(tempOrientation == 'h' || tempOrientation == 'v'){
+				orientationChecked = true;
+				orientation = tempOrientation;
+			}
+			else{
+				System.out.println("Fehler! Bitte h oder v eingeben: ");
+			}
+
+		}
+		return orientation;
 	}
 
 	private int chooseEnemy(int playerId){
@@ -331,44 +377,47 @@ public class GameLogic
 
 		while(enemyIsChoosen == false){
 
-			int tempId = IO.readInt();
+			int tempId = IO.readEnemyInt();
 
-			for(int t = 0; t <= tempId; t++){
+			for(int t = 0; t < enemyId.length; t++){
 				if(enemyId[t] == tempId){
 					enemyIsChoosen = true;
-					enemy = tempId;
+					enemy = tempId-1;
 					IO.println("Gegner ist \" " + this.player[enemy].getPlayerName() + "\"");
 				}
+			}
+			if(enemyIsChoosen == false){
+				this.colorPrint.println(EPrintColor.RED, "Ungültige Auswahl!");
 			}
 		}
 		return enemy;
 	}
 
 	private int chooseShip(int playerId){
+		int ship = -1;
 		try{
-			System.out.println("Wählen sie nun eines Ihrer Schiffe zum Schiessen aus: ");
 			int[] shipId = this.printShipList(playerId);
-			int ship = -1;
 			boolean shipIsChoosen = false;
 
-			while(shipIsChoosen == false){
-				ship = IO.readInt();
+			if(shipId != null){
+				while(shipIsChoosen == false){
+					ship = IO.readInt();
 
-				if(shipId[ship-1] > 0){
-					shipIsChoosen = true;
-				}
+					if(shipId[ship-1] > 0){
+						shipIsChoosen = true;
+					}
 
-				if(shipIsChoosen == false){
-					System.out.println("Ungültige Eingabe! Bitte Schiff auswählen: ");
+					if(shipIsChoosen == false){
+						System.out.println("Ungültige Eingabe! Bitte Schiff auswählen: ");
+					}
 				}
 			}
-
 			return ship;
 		}
 		catch(Exception e){
 			System.out.println("Fehler in der Eingabe!");
 		}
-		return -1;
+		return ship;
 	}
 
 	private int[] chooseCoordinates(){
@@ -393,14 +442,15 @@ public class GameLogic
 		return coordinates;
 	}
 
-	private int[] printEnemyList(int player){
+	private int[] printEnemyList(int playerOnTurn){
 		int[] enemyIds = new int[this.player.length];
 		//Druckt eine Liste aller noch im Spiel aktiven Spieler aus
 		for(int j = 0; j < this.player.length; j++){
-			if(j != player){
+			int jPrint = j+1;
+			if(j != playerOnTurn){
 				if(this.player[j].isAlive() == true){
-					IO.println(this.player[j].getPlayerName() + " (" + j + ")");
-					enemyIds[j] = j;
+					IO.println(this.player[j].getPlayerName() + " (" + jPrint + ")");
+					enemyIds[j] = jPrint;
 
 				}
 				else{
@@ -413,6 +463,8 @@ public class GameLogic
 	}
 
 	private int[] printShipList(int id){
+		System.out.println("Schiffe zur Auswahl: ");
+
 		Player playerOnTurn = this.player[id];
 
 		int[] shipIdToChoose = {-123,-123,-123,-123};
@@ -420,17 +472,24 @@ public class GameLogic
 		 * Anzahl der Zerströrer ausgeben, welche nicht am Laden sind
 		 */
 		int destroyer = 0;
+		int loading = 0;
 
 		for(int d = 0; d < playerOnTurn.getDestroyer().length; d++){
 			if(playerOnTurn.getDestroyer()[d].isLoaded(round) == true 
 					&& playerOnTurn.getDestroyer()[d].isSunk() == false){
 				destroyer++;
 			}
-
+			else if(playerOnTurn.getDestroyer()[d].isSunk() == false){
+				loading++;
+			}
 		}
+
 		if(destroyer > 0){
 			System.out.println(destroyer + "x Zerstörer (1)");
 			shipIdToChoose[0] = destroyer;
+		}
+		else if(loading > 0){
+			this.colorPrint.println(EPrintColor.BLUE, "Zerströrer (ladet)");
 		}
 
 
@@ -438,28 +497,41 @@ public class GameLogic
 		 * Anzahl der Fregatten ausgeben, welche nicht am Laden sind
 		 */
 		int frigate = 0;
+		loading = 0;
 
 		for(int f = 0; f < playerOnTurn.getFrigate().length; f++){
 			if(playerOnTurn.getFrigate()[f].isLoaded(round) == true 
 					&& playerOnTurn.getFrigate()[f].isSunk() == false){
 				frigate++;
 			}
+			else if(playerOnTurn.getFrigate()[f].isSunk() == false){
+				loading++;
+			}
+
 
 		}
 		if(frigate > 0){
 			System.out.println(frigate + "x Fregatte (2)");
 			shipIdToChoose[1] = frigate;
 		}
+		else if(loading > 0){
+			this.colorPrint.println(EPrintColor.BLUE, "Fregatte (ladet)");
+		}	
+
 
 		/*
 		 * Anzahl der Korvetten ausgeben, welceh nicht am Laden sind
 		 */
 		int corvette = 0;
+		loading = 0;
 
 		for(int c = 0; c < playerOnTurn.getCorvette().length; c++){
 			if(playerOnTurn.getCorvette()[c].isLoaded(round) == true 
 					&& playerOnTurn.getCorvette()[c].isSunk() == false){
 				corvette++;
+			}
+			else if(playerOnTurn.getCorvette()[c].isSunk() == false){
+				loading++;
 			}
 
 		}
@@ -467,23 +539,40 @@ public class GameLogic
 			System.out.println(corvette + "x Korvette (3)");
 			shipIdToChoose[2] = corvette;
 		}
+		else if(loading > 0){
+			this.colorPrint.println(EPrintColor.BLUE, "Korvette (ladet)");
+
+		}
 
 		/*
 		 * Anzahl der UBoote ausgeben welche nicht am Laden sind
 		 */
 		int submarine = 0;
+		loading = 0;
 
 		for(int s = 0; s < playerOnTurn.getSubmarine().length; s++){
 			if(playerOnTurn.getSubmarine()[s].isLoaded(round) == true 
 					&& playerOnTurn.getSubmarine()[s].isSunk() == false){
 				submarine++;
 			}
-
+			else if(playerOnTurn.getSubmarine()[s].isSunk() == false){
+				loading++;
+			}
 		}
 		if(submarine > 0){
 			System.out.println(submarine + "x UBoot (4)");
 			shipIdToChoose[3] = submarine;
 		}
+		else if(loading > 0){
+			this.colorPrint.println(EPrintColor.BLUE, "UBoot (ladet)");
+
+		}
+
+		if( (destroyer + frigate + corvette + submarine) == 0){
+			System.out.println("\n--Leider kein verfügbares Schiff in dieser Runde!--\n");
+			shipIdToChoose = null;
+		}
+
 
 		return shipIdToChoose;
 	}
